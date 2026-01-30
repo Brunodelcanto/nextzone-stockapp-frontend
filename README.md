@@ -1,0 +1,1 @@
+# Nextzone Stock App Frontend
