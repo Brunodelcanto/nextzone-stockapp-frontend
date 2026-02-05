@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from './pages/Login/Login'
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
+import Register from "./pages/Register/Register";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* RUTA PÚBLICA */}
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
         {/* RUTAS PRIVADAS */}

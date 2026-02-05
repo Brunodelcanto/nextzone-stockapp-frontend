@@ -94,6 +94,9 @@ return (
           Entrar
         </button>
       </form>
+      <div>
+        <p>¿No tienes una cuenta? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/register')}>Regístrate</span></p>
+      </div>
     </section>
   );
 };
