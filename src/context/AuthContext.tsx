@@ -15,8 +15,14 @@ export const AuthProvider = ({ children }: { children: ReactNode}) => {
     const [user, setUser] = useState<User | null>(() => {
         const savedToken = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
+        const expiry = localStorage.getItem('expiryTime');
 
-        if (!savedToken || !savedUser) return null;
+        if (!savedToken || !savedUser || !expiry) return null;
+
+        if (Date.now() > parseInt(expiry)) {
+            localStorage.clear();
+            return null;
+        }
             try {
                 return JSON.parse(savedUser);
             } catch (error) {
@@ -26,15 +32,18 @@ export const AuthProvider = ({ children }: { children: ReactNode}) => {
     });
     const [loading] = useState(false);
 
-    const login = (token: string, userData: User) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-    };
+    const login = (token: string, user: User) => {
+        const expiryTime = Date.now() +8 *60 *60 *1000;
 
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('expiryTime', expiryTime.toString());
+
+        setUser(user);
+    };
+    
     const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.clear();
         setUser(null);
     };
 
