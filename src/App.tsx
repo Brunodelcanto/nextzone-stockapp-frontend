@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from './pages/Login/Login'
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import Register from "./pages/Register/Register";
+import ProductList from "./pages/Product/Product";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               </div>
             } 
           />
+          <Route path="/products" element={<ProductList />} />
         </Route>
 
         {/* CUALQUIER OTRA RUTA: Redirige al Dashboard */}

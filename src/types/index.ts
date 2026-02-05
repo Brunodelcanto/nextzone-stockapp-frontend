@@ -1,5 +1,10 @@
 export type UserRole = 'admin' | 'seller' | 'developer';
 
+export interface Category {
+    _id: string;
+    name: string;
+}
+
 export interface User {
     id: string;
     name: string;
@@ -16,9 +21,9 @@ export interface ColorVariant {
 }
 
 export interface Product {
-    id: string;
+    _id: string;
     name: string;
-    category: string;
+    category: string | Category;
     variants: ColorVariant[];
     minStockAlert: number;
     isActive: boolean;
