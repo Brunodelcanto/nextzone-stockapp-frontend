@@ -34,10 +34,20 @@ const InventoryCards = () => {
     return acc;
 }, {});
 
-    const handleIncreaseStock = async (productId: string, color: string) => {
-        // Aquí irá la lógica para sumar +1 a la variante específica en el back
-        console.log(`Aumentando stock de: ${productId} - Color: ${color}`);
-    };
+   const handleQuantityChange = async (productId: string, color: string, quantity: number) => {
+       try {
+        const response = await axios.patch(`http://localhost:3000/api/products/stock/${productId}`, {
+            color,
+            quantity
+        });
+
+        if (!response.data.error) {
+            setProducts(prev => prev.map(p => p._id === productId ? response.data.data : p));
+        }
+       } catch (err) {
+        console.error("Error updating stock:", err);
+       }
+   }
 
     if (loading) return <div>Loading...</div>;
 
@@ -57,12 +67,13 @@ const InventoryCards = () => {
                                     {product.variants.map((v, idx) => (
                                         <li key={idx}>
                                             {v.color}: {v.amount} unidades
-                                            <button 
-                                                onClick={() => handleIncreaseStock(product._id as string, v.color)}
-                                                disabled={!product.isActive}
-                                            >
-                                                +
-                                            </button>
+                                           <button onClick={() => handleQuantityChange(product._id, v.color, 1)}>
+                                            +
+                                           </button>
+                                           <button onClick={() => handleQuantityChange(product._id, v.color, -1)}
+                                            disabled={v.amount <= 0}>
+                                            -
+                                           </button>
                                         </li>
                                     ))}
                                 </ul>
