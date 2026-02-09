@@ -3,6 +3,7 @@ import Login from './pages/Login/Login'
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import Register from "./pages/Register/Register";
 import ProductList from "./pages/Product/Product";
+import EditProduct from "./components/editProduct/EditProduct";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             } 
           />
           <Route path="/products" element={<ProductList />} />
+          <Route path="/edit-product/:id" element={<EditProduct />} />
         </Route>
 
         {/* CUALQUIER OTRA RUTA: Redirige al Dashboard */}

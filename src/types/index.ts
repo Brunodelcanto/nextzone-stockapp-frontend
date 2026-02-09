@@ -5,6 +5,12 @@ export interface Category {
     name: string;
 }
 
+export interface Color {
+    _id: string;
+    name: string;
+    hex: string;
+}
+
 export interface User {
     id: string;
     name: string;
@@ -14,7 +20,7 @@ export interface User {
 
 export interface ColorVariant {
     _id?: string;
-    color: string;
+    color: string | Color;
     amount: number;
     priceCost: number;
     priceSell: number;
@@ -48,4 +54,12 @@ export interface Sale {
     totalAmount: number;
     comment?: string;
     createdAt: string;
+}
+
+export interface ProductFormValues {
+    name: string;
+    category: string;
+    minStockAlert: number;
+    variants: (Omit<ColorVariant, 'color'> & { color: string })[]; 
+    image: FileList | null;
 }

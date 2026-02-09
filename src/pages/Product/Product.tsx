@@ -1,3 +1,4 @@
+import CreateProduct from "../../components/createProduct/CreateProduct";
 import InventoryCards from "../../components/inventoryCard/InventoryCards";
 
 const ProductList = () => {
@@ -5,6 +6,7 @@ const ProductList = () => {
     return (
         <div>
             <h1>Product List</h1>
+            <CreateProduct />
             <InventoryCards />
         </div>
     )
