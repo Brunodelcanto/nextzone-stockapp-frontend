@@ -14,7 +14,7 @@ export interface Color {
 }
 
 export interface User {
-    id: string;
+    _id: string;
     name: string;
     email: string;
     role: UserRole;
@@ -51,11 +51,30 @@ export interface SaleItem {
 }
 
 export interface Sale {
-    id: string;
+    _id: string;
     items: SaleItem[];
     totalAmount: number;
+    totalProfit: number;
     comment?: string;
     createdAt: string;
+}
+
+export interface CartItem {
+    productId: string;
+    variantId: string;
+    name: string;
+    quantity: number;
+    price: number;
+    maxStock: number;
+}
+
+export interface SaleFormValues {
+    items: {
+        productId: string;
+        variantId: string;
+        quantity: number;
+    }[];
+    comment?: string;
 }
 
 export interface ProductFormValues {

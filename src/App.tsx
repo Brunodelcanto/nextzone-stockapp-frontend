@@ -9,6 +9,7 @@ import EditColor from "./components/editColor/EditColor";
 import CategoryPage from "./pages/Category/Category";
 import EditCategory from "./components/editCategory/editCategory";
 import Navbar from "./components/navBar/NavBar";
+import SalePage from "./pages/Sale/Sale";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                   <Route path="/edit-color/:id" element={<EditColor />} />
                   <Route path="/categories" element={<CategoryPage />} />
                   <Route path="/edit-category/:id" element={<EditCategory />} />
+                  <Route path="/sales" element={<SalePage />} />
                 </Routes>
               </div>
             </>

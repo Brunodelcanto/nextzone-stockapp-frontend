@@ -29,6 +29,7 @@ const Navbar = () => {
               <NavLink to="/products" className={linkClass}>Productos</NavLink>
               <NavLink to="/colors" className={linkClass}>Colores</NavLink>
               <NavLink to="/categories" className={linkClass}>Categorías</NavLink>
+                <NavLink to="/sales" className={linkClass}>Ventas</NavLink>
             </div>
           </div>
 
