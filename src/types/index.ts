@@ -3,12 +3,14 @@ export type UserRole = 'admin' | 'seller' | 'developer';
 export interface Category {
     _id: string;
     name: string;
+    isActive: boolean;
 }
 
 export interface Color {
     _id: string;
     name: string;
     hex: string;
+    isActive: boolean;
 }
 
 export interface User {

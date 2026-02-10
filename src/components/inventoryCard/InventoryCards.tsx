@@ -3,11 +3,16 @@ import axios from "axios";
 import type { Category, Product } from "../../types";
 import { useNavigate } from "react-router-dom";
 
-const InventoryCards = () => {
+interface InventoryCardsProps {
+    refreshTrigger: number;
+ }
+
+const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
     const navigate = useNavigate();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [showModal, setShowModal] = useState<string | null>(null);
 
     const fetchProducts = async () => {
         try {
@@ -22,7 +27,7 @@ const InventoryCards = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [refreshTrigger]);
 
     const filteredProducts = products.filter(product =>{
     const term = searchTerm.toLowerCase();
@@ -81,6 +86,19 @@ const InventoryCards = () => {
     } catch (err) {
         console.error("Error toggling product status:", err);
         alert("Error to change product status")
+    }
+   }
+
+   const eliminateProduct = async (productId: string) => {
+    try {
+        const response = await axios.delete(`http://localhost:3000/api/products/${productId}`);
+
+        if (!response.data.error) {
+            setProducts(prev => prev.filter(p => p._id !== productId));
+        }
+    } catch (err) {
+        console.error("Error deleting product:", err);
+        alert("Error deleting product");
     }
    }
 
@@ -168,13 +186,42 @@ const InventoryCards = () => {
                                     <button
                                     onClick={(e) => {e.stopPropagation(); handleToggleActive(product._id, product.isActive)}}
                                     >{product.isActive ? "Desactivar" : "Activar"}</button>
-                                    <button disabled={!product.isActive}>Editar</button>
+                                </div>
+                                <div>
+                                    <button onClick={(e) => {e.stopPropagation(); setShowModal(product._id)}}>Eliminar</button>
                                 </div>
                             </div>
                         )})}
                     </div>
                 </div>
             ))}
+            {showModal && (
+    <div style={{
+        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+    }}>
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
+            <p>¿Estás seguro de eliminar este producto?</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                <button 
+                    onClick={() => setShowModal(null)} 
+                    style={{ backgroundColor: '#ccc', padding: '10px' }}
+                >
+                    Cancelar
+                </button>
+                <button 
+                    onClick={() => {
+                        eliminateProduct(showModal);
+                        setShowModal(null);
+                    }} 
+                    style={{ backgroundColor: '#ff4d4f', color: 'white', padding: '10px' }}
+                >
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+)}
         </section>
     )
 

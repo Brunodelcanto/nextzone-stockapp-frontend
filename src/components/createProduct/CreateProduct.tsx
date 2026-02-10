@@ -14,6 +14,10 @@ interface ProductFormValues {
     image: FileList | null;
 }
 
+interface CreateProductProps {
+    onProductCreated: () => void;
+}
+
 const validationSchema = Joi.object<ProductFormValues>({
     name: Joi.string().min(3).max(50).required().messages({
         "string.base": "El nombre debe ser un texto",
@@ -52,11 +56,13 @@ const validationSchema = Joi.object<ProductFormValues>({
      })
 })
 
-const CreateProduct = () => {
+const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [colors, setColors] = useState<Color[]>([]);
     const [loading, setLoading] = useState(false);
     const [preview , setPreview] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const { register, control, handleSubmit, reset, resetField, formState: { errors } } = useForm<ProductFormValues>({
         resolver: joiResolver(validationSchema),
@@ -109,11 +115,14 @@ const CreateProduct = () => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            alert("¡Producto cargado con éxito!");
+            setSuccessMessage("¡Producto cargado con éxito!");
+            setTimeout(() => setSuccessMessage(""), 2000);
             reset();
+            onProductCreated();
         } catch (err) {
             const error = err as AxiosError<{ message?: string }>;
-            alert(error.response?.data?.message || "Error al crear producto");
+            setErrorMessage(error.response?.data?.message || "Error al crear producto");
+            setTimeout(() => setErrorMessage(""), 2000);
         } finally {
             setLoading(false);
         }
@@ -139,6 +148,9 @@ const clearImage = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 bg-white shadow rounded-lg">
+
+            {successMessage && <div className="mb-4 p-2 bg-green-200 text-green-800 rounded">{successMessage}</div>}
+            {errorMessage && <div className="mb-4 p-2 bg-red-200 text-red-800 rounded">{errorMessage}</div>}
 
             <div className="mb-4">
                 <label>Nombre</label>
