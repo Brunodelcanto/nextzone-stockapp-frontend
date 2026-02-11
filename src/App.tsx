@@ -10,28 +10,26 @@ import CategoryPage from "./pages/Category/Category";
 import EditCategory from "./components/editCategory/editCategory";
 import Navbar from "./components/navBar/NavBar";
 import SalePage from "./pages/Sale/Sale";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* RUTA PÚBLICA */}
+        {/* RUTA PÚBLICA (Sin Navbar) */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* RUTAS PRIVADAS */}
+        {/* RUTAS PRIVADAS (Con Navbar y Layout unificado) */}
         <Route element={<ProtectedRoute />}>
           <Route path="*" element={
-            <>
+            <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary/20">
               <Navbar /> 
-              <div className="container mx-auto mt-6">
+              
+              {/* Contenedor Principal con padding uniforme */}
+              <div className="flex-1 w-full max-w-[1600px] mx-auto transition-all duration-500">
                 <Routes>
-                  <Route path="/dashboard" element={
-                    <div>
-                      <h1 className="text-2xl font-bold">Panel de Control</h1>
-                      <p>Bienvenido al sistema de stock de Nextzone.</p>
-                    </div>
-                  } />
+                  <Route path="/dashboard" element={<Dashboard /> } />
                   <Route path="/products" element={<ProductList />} />
                   <Route path="/edit-product/:id" element={<EditProduct />} />
                   <Route path="/colors" element={<ColorPage />} />
@@ -41,10 +39,11 @@ function App() {
                   <Route path="/sales" element={<SalePage />} />
                 </Routes>
               </div>
-            </>
+            </div>
           } />
         </Route>
 
+        {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

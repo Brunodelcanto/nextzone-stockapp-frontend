@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi"; 
 import type { Category, Color, ColorVariant } from "../../types/index";
 import Joi from "joi";
+import { PackagePlus, Image as ImageIcon, Plus, Trash2, CheckCircle2, AlertCircle, X } from "lucide-react";
 
 interface ProductFormValues {
     name: string;
@@ -146,116 +147,200 @@ const clearImage = () => {
     resetField("image"); 
 };
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 bg-white shadow rounded-lg">
-
-            {successMessage && <div className="mb-4 p-2 bg-green-200 text-green-800 rounded">{successMessage}</div>}
-            {errorMessage && <div className="mb-4 p-2 bg-red-200 text-red-800 rounded">{errorMessage}</div>}
-
-            <div className="mb-4">
-                <label>Nombre</label>
-                <input {...register("name")} className="border p-2 w-full" />
-                {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
+   return (
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto p-10 bg-white rounded-[3rem] shadow-card border border-slate-100 transition-all hover:shadow-card-hover animate-in fade-in duration-700">
+        
+        {/* HEADER DEL FORMULARIO */}
+        <div className="flex items-center gap-4 mb-10 border-b border-slate-50 pb-8">
+            <div className="bg-primary/10 p-4 rounded-2xl text-primary">
+                <PackagePlus className="w-8 h-8" />
             </div>
-
-            <div className="mb-4">
-                <label>Categoría</label>
-                <select {...register("category")} className="border p-2 w-full">
-                    <option value="">Seleccionar categoría...</option>
-                    {categories.map(c => (
-                        <option key={c._id} value={c._id}>{c.name}</option>
-                    ))}
-                </select>
-                {errors.category && <span className="text-red-500 text-xs">{errors.category.message}</span>}
-            </div>
-
-            <div className="mb-4">
-                <label>Imagen</label>
-                <input type="file" {...register("image")} accept="image/*" onChange={(e) => {register("image").onChange(e); handleImageChange(e)}} />
-                {errors.image && <span className="text-red-500 text-xs">{errors.image.message}</span>}
-            </div>
-            
-
-            {preview && (
-        <div className="mt-4 flex flex-col items-start">
-            <div className="relative">
-                <img 
-                    src={preview} 
-                    alt="Vista previa" 
-                    className="w-32 h-32 object-cover rounded-lg border shadow-sm"
-                />
-                {/* Botón flotante para limpiar */}
-                <button
-                    type="button"
-                    onClick={clearImage}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-red-700 shadow-lg"
-                    title="Eliminar imagen seleccionada"
-                >
-                    ✕
-                </button>
+            <div>
+                <h2 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic">Nuevo Producto</h2>
+                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-1">Carga de inventario • Next Zone</p>
             </div>
         </div>
-    )}
 
-            
-            {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-4 mb-3 items-end bg-gray-50 p-3 rounded">
-                    <div className="flex-1">
-                        <label className="text-xs">Color</label>
-                        <select 
-                            {...register(`variants.${index}.color` as const)}
-                            className="border p-2 w-full rounded"
-                        >
-                            <option value="">Seleccionar color...</option>
-                            {colors.map(c => (
-                                <option key={c._id} value={c._id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+        {/* MENSAJES DE ESTADO */}
+        {successMessage && (
+            <div className="mb-8 p-4 bg-accent-green/[0.08] border border-accent-green/20 text-accent-green text-xs font-black rounded-2xl animate-bounce flex items-center gap-3 uppercase tracking-wide">
+                <CheckCircle2 className="w-5 h-5" /> {successMessage}
+            </div>
+        )}
+        {errorMessage && (
+            <div className="mb-8 p-4 bg-accent-red/[0.08] border border-accent-red/20 text-accent-red text-xs font-black rounded-2xl animate-pulse flex items-center gap-3 uppercase tracking-wide">
+                <AlertCircle className="w-5 h-5" /> {errorMessage}
+            </div>
+        )}
 
-                    <div className="w-20">
-                        <label className="text-xs">Stock</label>
-                        <input type="number" {...register(`variants.${index}.amount` as const)} className="border p-1 w-full" />
-                        {errors.variants?.[index]?.amount && <span className="text-red-500 text-xs">{errors.variants[index]?.amount?.message}</span>}
-                    </div>
-
-                    <div className="w-24">
-                        <label className="text-xs">Precio Costo</label>
-                        <input type="number" step="0.01" {...register(`variants.${index}.priceCost` as const)} className="border p-1 w-full" />
-                        {errors.variants?.[index]?.priceCost && <span className="text-red-500 text-xs">{errors.variants[index]?.priceCost?.message}</span>}
-                    </div>
-                    <div className="w-24">
-                        <label className="text-xs">Precio Venta</label>
-                        <input type="number" step="0.01" {...register(`variants.${index}.priceSell` as const)} className="border p-1 w-full" />
-                        {errors.variants?.[index]?.priceSell && <span className="text-red-500 text-xs">{errors.variants[index]?.priceSell?.message}</span>}
-                    </div>
-                    
-                    <button 
-                    type="button" 
-                    onClick={() => remove(index)} 
-                    disabled={fields.length === 1}
-                    className={`${fields.length === 1 ? 'opacity-30 cursor-not-allowed' : 'text-red-500'}`}
-                    >
-            X
-        </button>
+        {/* SECCIÓN 1: DATOS BÁSICOS E IMAGEN */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <div className="space-y-6">
+                <div className="group">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">Nombre del Producto</label>
+                    <input 
+                        {...register("name")} 
+                        className={`w-full bg-slate-50 border-2 border-transparent rounded-2xl py-4 px-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.name ? 'border-accent-red/30' : ''}`}
+                        placeholder="Ej: iPhone 15 Pro Max"
+                    />
+                    {errors.name && <span className="text-[10px] font-bold text-accent-red ml-2 mt-2 inline-block uppercase animate-pulse">{errors.name.message}</span>}
                 </div>
-            ))}
 
-            <button 
-                type="button" 
-                onClick={() => append({ color: "", amount: 0, priceCost: 0, priceSell: 0 })}
-                className="text-blue-500 text-sm mb-4"
-            >
-                + Agregar Color
-            </button>
+                <div className="group relative">
+                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
+                 Categoría
+                </label>
+                <div className="relative">
+                    <select 
+                    {...register("category")} 
+                    className="w-full bg-slate-50 border-2 border-transparent rounded-2xl py-4 px-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none relative z-10"
+                    >
+                    <option value="" className="font-sans text-slate-900">Seleccionar categoría...</option>
+                    {categories.map(c => (
+                        <option key={c._id} value={c._id} className="font-sans text-slate-900">
+                        {c.name}
+                        </option>
+                    ))}
+                    </select>
 
-            <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-3 rounded">
-                {loading ? "Guardando..." : "CREAR PRODUCTO"}
-            </button>
-        </form>
-    );
+                    {/* Flecha personalizada de Nextzone */}
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none z-20 text-slate-300 group-focus-within:text-primary transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                    </div>
+                </div>
+                {errors.category && (
+                    <span className="text-[10px] font-bold text-accent-red ml-2 mt-2 inline-block uppercase animate-pulse">
+                    {errors.category.message}
+                    </span>
+                )}
+            </div>
+            </div>
+
+            {/* CARGA DE IMAGEN CON PREVIEW */}
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] p-6 bg-slate-50/50 hover:bg-white hover:border-primary/30 transition-all group relative overflow-hidden">
+                {!preview ? (
+                    <label className="flex flex-col items-center gap-3 cursor-pointer">
+                        <div className="bg-white p-4 rounded-full shadow-sm text-slate-300 group-hover:text-primary transition-colors">
+                            <ImageIcon className="w-8 h-8" />
+                        </div>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Subir Imagen</span>
+                        <input type="file" {...register("image")} accept="image/*" className="hidden" onChange={(e) => {register("image").onChange(e); handleImageChange(e)}} />
+                    </label>
+                ) : (
+                    <div className="relative w-full h-full flex items-center justify-center animate-in zoom-in-75 duration-300">
+                        <img src={preview} alt="Preview" className="w-40 h-40 object-cover rounded-2xl shadow-lg border-4 border-white" />
+                        <button type="button" onClick={clearImage} className="absolute top-0 right-0 bg-accent-red text-white p-2 rounded-full shadow-xl hover:scale-110 active:scale-90 transition-all cursor-pointer">
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+                )}
+                {errors.image && <span className="absolute bottom-2 text-[10px] font-black text-accent-red uppercase tracking-widest animate-pulse">{errors.image.message}</span>}
+            </div>
+        </div>
+
+        {/* SECCIÓN 2: VARIANTES DE COLOR */}
+        <div className="space-y-6 mb-10">
+            <div className="flex items-center justify-between px-2">
+                <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em] italic">Configuración de Variantes</h3>
+                <button type="button" onClick={() => append({ color: "", amount: 0, priceCost: 0, priceSell: 0 })} className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all cursor-pointer">
+                    <Plus className="w-4 h-4" /> Agregar Variante
+                </button>
+            </div>
+            
+
+
+
+
+
+
+
+
+
+                {/* <div className="group relative">
+                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
+                 Categoría
+                </label>
+                <div className="relative">
+                    <select 
+                    {...register("category")} 
+                    className="w-full bg-slate-50 border-2 border-transparent rounded-2xl py-4 px-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none relative z-10"
+                    >
+                    <option value="" className="font-sans text-slate-900">Seleccionar categoría...</option>
+                    {categories.map(c => (
+                        <option key={c._id} value={c._id} className="font-sans text-slate-900">
+                        {c.name}
+                        </option>
+                    ))}
+                    </select>
+
+              
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none z-20 text-slate-300 group-focus-within:text-primary transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                    </div>
+                </div>
+                {errors.category && (
+                    <span className="text-[10px] font-bold text-accent-red ml-2 mt-2 inline-block uppercase animate-pulse">
+                    {errors.category.message}
+                    </span>
+                )}
+            </div>
+            </div> */}
+
+
+
+
+
+
+
+            <div className="grid grid-cols-1 gap-4">
+                {fields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end bg-slate-50 p-6 rounded-[2rem] border border-slate-100 transition-all hover:bg-white hover:shadow-md group">
+                        <div className="md:col-span-1">
+                            <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Color</label>
+                            <select {...register(`variants.${index}.color` as const)} className="w-full bg-white border-2 border-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-primary transition-all">
+                                <option value="">Color...</option>
+                                {colors.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Stock</label>
+                            <input type="number" {...register(`variants.${index}.amount` as const)} className="w-full bg-white border-2 border-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-primary" />
+                        </div>
+                        <div>
+                            <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Costo ($)</label>
+                            <input type="number" step="0.01" {...register(`variants.${index}.priceCost` as const)} className="w-full bg-white border-2 border-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-primary text-accent-orange" />
+                        </div>
+                        <div>
+                            <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Venta ($)</label>
+                            <input type="number" step="0.01" {...register(`variants.${index}.priceSell` as const)} className="w-full bg-white border-2 border-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-primary text-accent-green" />
+                        </div>
+                        <div className="flex justify-end">
+                            <button type="button" onClick={() => remove(index)} disabled={fields.length === 1} className={`p-3 rounded-xl transition-all ${fields.length === 1 ? 'opacity-20' : 'text-slate-300 hover:text-accent-red hover:bg-accent-red/10 cursor-pointer hover:scale-110'}`}>
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        {/* BOTÓN FINAL */}
+        <button 
+            type="submit" 
+            disabled={loading} 
+            className="group relative w-full overflow-hidden bg-primary text-white font-black py-5 rounded-[2rem] shadow-xl shadow-primary/30 transition-all duration-300 hover:bg-primary-dark hover:shadow-2xl active:scale-[0.98] cursor-pointer disabled:opacity-50 uppercase tracking-[0.2em] text-sm"
+        >
+            <span className="relative z-10 flex items-center justify-center gap-3">
+                {loading ? "Procesando..." : "Finalizar Carga de Producto"}
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+        </button>
+    </form>
+);
 };
 
 export default CreateProduct;

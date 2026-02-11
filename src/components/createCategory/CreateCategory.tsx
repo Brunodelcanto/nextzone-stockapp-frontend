@@ -3,6 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "axios";
 import Joi from "joi";
+import { Tags, CheckCircle2, AlertCircle, FolderPlus } from "lucide-react";
 
 interface CategoryFormValues {
     name: string;
@@ -44,32 +45,62 @@ const CreateCategory = ({ onCategoryCreated }: CreateCategoryProps) => {
     };
 
     return (
-        <div className="p-6 max-w-lg mx-auto bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Nueva Categoría</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {errorMessage && <div className="p-2 bg-red-200 text-red-800 rounded">{errorMessage}</div>}
-                {successMessage && <div className="p-2 bg-green-200 text-green-800 rounded">{successMessage}</div>}
-                
-                <div>
-                    <label className="block text-sm font-medium">Nombre</label>
+    <div className="p-10 max-w-lg mx-auto bg-white shadow-card rounded-[2.5rem] border border-slate-100 transition-all hover:shadow-card-hover mt-10 animate-in fade-in duration-700">
+        
+        {/* HEADER DE CATEGORÍA */}
+        <div className="flex items-center gap-4 mb-10 border-b border-slate-50 pb-8">
+            <div className="bg-primary/10 p-4 rounded-2xl text-primary">
+                <FolderPlus className="w-8 h-8" />
+            </div>
+            <div>
+                <h2 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">Nueva Categoría</h2>
+                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-1">Organización de Stock • Next Zone</p>
+            </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            
+            {/* MENSAJES DE ESTADO TITILANTES */}
+            {errorMessage && (
+                <div className="p-4 bg-accent-red/[0.08] border border-accent-red/20 text-accent-red text-xs font-black rounded-2xl animate-pulse flex items-center gap-3 uppercase tracking-wide">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" /> {errorMessage}
+                </div>
+            )}
+            {successMessage && (
+                <div className="p-4 bg-accent-green/[0.08] border border-accent-green/20 text-accent-green text-xs font-black rounded-2xl animate-bounce flex items-center gap-3 uppercase tracking-wide">
+                    <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> {successMessage}
+                </div>
+            )}
+            
+            {/* CAMPO: NOMBRE DE CATEGORÍA */}
+            <div className="group">
+                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
+                    Nombre del Grupo
+                </label>
+                <div className="relative">
+                    <Tags className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 w-5 h-5 group-focus-within:text-primary transition-colors" />
                     <input 
                         {...register("name")}
                         placeholder="Ej: Fundas iPhone"
-                        className={`w-full p-2 border rounded mt-1 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                        className={`w-full bg-slate-50 border-2 border-transparent rounded-[1.5rem] py-4 pl-14 pr-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.name ? 'border-accent-red/30 bg-accent-red/[0.02]' : ''}`}
                     />
-                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
                 </div>
+                {errors.name && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.name.message}</p>}
+            </div>
 
-                <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 disabled:bg-blue-300"
-                >
-                    {isSubmitting ? "Guardando..." : "CREAR CATEGORÍA"}
-                </button>
-            </form>
-        </div>
-    );
+            {/* BOTÓN CON EFECTO SHIMMER */}
+            <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="group relative w-full overflow-hidden bg-primary text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-primary/30 transition-all duration-300 hover:bg-primary-dark hover:shadow-2xl active:scale-[0.98] cursor-pointer disabled:opacity-50 uppercase tracking-[0.2em] text-sm"
+            >
+                <span className="relative z-10">{isSubmitting ? "Guardando..." : "Crear Categoría"}</span>
+                {/* El efecto shimmer que ya definimos en el CSS */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+            </button>
+        </form>
+    </div>
+);
 };
 
 export default CreateCategory;
