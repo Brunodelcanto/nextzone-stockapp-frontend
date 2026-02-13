@@ -195,9 +195,14 @@ return (
                                             
                                             return (
                                                 <div key={idx} className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl group/item hover:bg-white transition-colors border border-transparent hover:border-slate-100">
-                                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{colorName}</span>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">{colorName}</span>
+                                                        {/* PRECIO ESPECÍFICO POR COLOR */}
+                                                        <span className="text-[11px] font-black text-accent-green italic tracking-tighter">${v.priceSell.toLocaleString()}</span>
+                                                    </div>
+                                                    
                                                     <div className="flex items-center gap-3">
-                                                        <span className={`text-xs font-black ${v.amount < 3 ? 'text-accent-red' : 'text-slate-700'}`}>{v.amount} u.</span>
+                                                        <span className={`text-xs font-black ${v.amount < 3 ? 'text-accent-red animate-pulse' : 'text-slate-700'}`}>{v.amount} u.</span>
                                                         <div className="flex gap-1">
                                                             <button 
                                                                 onClick={(e) => {e.stopPropagation(); handleQuantityChange(product._id, colorId, -1)}}

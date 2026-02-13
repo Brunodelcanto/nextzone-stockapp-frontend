@@ -3,8 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "axios";
 import Joi from "joi";
-import { useNavigate } from "react-router-dom";
-import { Palette, CheckCircle2, AlertCircle, ArrowLeft, Paintbrush } from "lucide-react";
+import { Palette, CheckCircle2, AlertCircle, Paintbrush, Pipette } from "lucide-react";
 
 interface ColorFormValues {
     name: string;
@@ -30,11 +29,10 @@ const colorSchema = Joi.object<ColorFormValues>({
 });
 
 const CreateColor = ({ onColorCreated }: CreateColorProps) => {
-    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
-    const { register,reset, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<ColorFormValues>({
+    const { register,reset, handleSubmit,setValue, formState: { errors, isSubmitting }, watch } = useForm<ColorFormValues>({
         resolver: joiResolver(colorSchema),
         defaultValues: {
             hex: "#000000"
@@ -103,32 +101,43 @@ const CreateColor = ({ onColorCreated }: CreateColorProps) => {
                 {errors.name && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.name.message}</p>}
             </div>
 
-            {/* CAMPO: CÓDIGO HEX CON PREVIEW MEJORADO */}
+            {/* CAMPO: CÓDIGO HEX + SELECTOR VISUAL */}
             <div className="group">
-                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
-                    Código Hexadecimal
-                </label>
-                <div className="flex gap-4">
-                    <div className="relative flex-1">
-                        <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-slate-300 group-focus-within:text-primary transition-colors">#</span>
-                        <input 
-                            {...register("hex")}
-                            placeholder="FFFFFF"
-                            className={`w-full bg-slate-50 border-2 border-transparent rounded-[1.5rem] py-4 pl-10 pr-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.hex ? 'border-accent-red/30 bg-accent-red/[0.02]' : ''}`}
-                        />
+                    <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
+                        Código Hexadecimal
+                    </label>
+                    <div className="flex gap-4 items-center">
+                        <div className="relative flex-1">
+                            <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-slate-300 group-focus-within:text-primary transition-colors">#</span>
+                            <input 
+                                {...register("hex")}
+                                placeholder="FFFFFF"
+                                className={`w-full bg-slate-50 border-2 border-transparent rounded-[1.5rem] py-4 pl-10 pr-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.hex ? 'border-accent-red/30 bg-accent-red/[0.02]' : ''}`}
+                            />
+                        </div>
+                        
+                        {/* Selector de Color Invisible pero funcional */}
+                        <div className="relative w-20 h-16 group/picker transition-transform hover:scale-110 active:scale-95 duration-500">
+                            <input 
+                                type="color"
+                                value={currentHex.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex : "#000000"}
+                                onChange={(e) => setValue("hex", e.target.value.toUpperCase())}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            {/* Vista previa con estilo de "Chip" (El mismo de antes pero ahora reacciona al clic) */}
+                            <div 
+                                className="w-full h-full rounded-2xl border-4 border-white shadow-lg flex items-center justify-center overflow-hidden"
+                                style={{ 
+                                    backgroundColor: currentHex.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex : "#F1F5F9",
+                                    boxShadow: `0 10px 15px -3px ${currentHex.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex + '40' : 'rgba(0,0,0,0.1)'}`
+                                }}
+                            >
+                                <Pipette className={`w-5 h-5 ${parseInt((currentHex||'#ffffff').replace('#',''), 16) > 0xffffff/1.5 ? 'text-black/20' : 'text-white/40'}`} />
+                            </div>
+                        </div>
                     </div>
-                    
-                    {/* Vista previa con estilo de "Chip" */}
-                    <div 
-                        className="w-20 h-16 rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-110 duration-500"
-                        style={{ 
-                            backgroundColor: currentHex.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex : "#F1F5F9",
-                            boxShadow: `0 10px 15px -3px ${currentHex.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex + '40' : 'rgba(0,0,0,0.1)'}`
-                        }}
-                    />
+                    {errors.hex && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.hex.message}</p>}
                 </div>
-                {errors.hex && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.hex.message}</p>}
-            </div>
 
             {/* ACCIONES */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -139,14 +148,6 @@ const CreateColor = ({ onColorCreated }: CreateColorProps) => {
                 >
                     <span className="relative z-10">{isSubmitting ? "Guardando..." : "Crear Color"}</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                </button>
-                
-                <button 
-                    type="button" 
-                    onClick={() => navigate("/colors")}
-                    className="flex-1 bg-slate-100 text-slate-500 font-black py-5 rounded-[1.5rem] hover:bg-slate-200 transition-all active:scale-[0.98] cursor-pointer uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Cancelar
                 </button>
             </div>
         </form>

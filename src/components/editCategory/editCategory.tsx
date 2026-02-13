@@ -71,7 +71,7 @@ const EditCategory = () => {
 );
 
 return (
-    <div className="p-10 max-w-xl mx-auto bg-white shadow-card rounded-[2.5rem] border border-slate-100 transition-all hover:shadow-card-hover mt-10 animate-in fade-in duration-700">
+    <div className="p-10 max-w-xl mx-auto bg-white shadow-card rounded-[2.5rem] border border-slate-100 hover:shadow-card-hover mt-10">
         
         {/* HEADER DE EDICIÓN */}
         <div className="flex items-center gap-4 mb-10 border-b border-slate-50 pb-8">

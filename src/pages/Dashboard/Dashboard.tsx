@@ -33,7 +33,7 @@ const Dashboard = () => {
 
         // Calculamos productos con bajo stock (ej: total < 5)
         const lowStock = products.filter((p: Product) => 
-          p.variants.reduce((acc, v) => acc + v.amount, 0) <= 5
+          p.isActive && p.variants.reduce((acc, v) => acc + v.amount, 0) <= 5
         ).length;
 
         setData({

@@ -4,7 +4,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "axios";
 import Joi from "joi";
-import { Edit3, Palette, CheckCircle2, AlertCircle, ArrowLeft, Paintbrush } from "lucide-react";
+import { Edit3, Palette, CheckCircle2, AlertCircle, ArrowLeft, Paintbrush, Pipette } from "lucide-react";
 
 interface ColorFormValues {
     name: string;
@@ -32,7 +32,7 @@ const EditColor = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting } } = useForm<ColorFormValues>({
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm<ColorFormValues>({
         resolver: joiResolver(colorSchema)
     });
 
@@ -43,8 +43,6 @@ const EditColor = () => {
             try {
                 const response = await axios.get(`http://localhost:3000/api/colors/${id}`);
                 const colorData = response.data.data;
-                setSuccessMessage("Color cargado correctamente");
-                setTimeout(() => setSuccessMessage(null), 2000);
                 reset({
                     name: colorData.name,
                     hex: colorData.hex
@@ -83,7 +81,7 @@ const EditColor = () => {
 );
 
 return (
-    <div className="p-10 max-w-xl mx-auto bg-white shadow-card rounded-[2.5rem] border border-slate-100 transition-all hover:shadow-card-hover mt-10 animate-in fade-in duration-700">
+    <div className="p-10 max-w-xl mx-auto bg-white shadow-card rounded-[2.5rem] border border-slate-100 hover:shadow-card-hover mt-10">
         
         {/* HEADER DE EDICIÓN */}
         <div className="flex items-center gap-4 mb-10 border-b border-slate-50 pb-8">
@@ -126,32 +124,44 @@ return (
                 {errors.name && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.name.message}</p>}
             </div>
 
-            {/* CAMPO: CÓDIGO HEX CON PREVIEW MEJORADO */}
-            <div className="group">
-                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
-                    Código Hexadecimal
-                </label>
-                <div className="flex gap-4">
-                    <div className="relative flex-1">
-                        <Paintbrush className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 w-5 h-5 group-focus-within:text-primary transition-colors" />
-                        <input 
-                            {...register("hex")}
-                            placeholder="#000000"
-                            className={`w-full bg-slate-50 border-2 border-transparent rounded-[1.5rem] py-4 pl-14 pr-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.hex ? 'border-accent-red/30 bg-accent-red/[0.02]' : ''}`}
-                        />
+           {/* CAMPO: CÓDIGO HEX + SELECTOR VISUAL */}
+                <div className="group">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
+                        Código Hexadecimal
+                    </label>
+                    <div className="flex gap-4 items-center">
+                        <div className="relative flex-1">
+                            <Paintbrush className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 w-5 h-5 group-focus-within:text-primary transition-colors" />
+                            <input 
+                                {...register("hex")}
+                                placeholder="#000000"
+                                className={`w-full bg-slate-50 border-2 border-transparent rounded-[1.5rem] py-4 pl-14 pr-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 ${errors.hex ? 'border-accent-red/30 bg-accent-red/[0.02]' : ''}`}
+                            />
+                        </div>
+                        
+                        {/* Selector de Color Integrado en el Chip de Preview */}
+                        <div className="relative w-20 h-16 group/picker transition-transform hover:scale-110 active:scale-95 duration-500">
+                            <input 
+                                type="color"
+                                // Aseguramos que sea un HEX válido para el input color nativo
+                                value={currentHex?.match(/^#([A-Fa-f0-9]{6})$/) ? currentHex : "#000000"}
+                                onChange={(e) => setValue("hex", e.target.value.toUpperCase())}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            {/* Chip de previsualización con sombra dinámica */}
+                            <div 
+                                className="w-full h-full rounded-2xl border-4 border-white shadow-lg flex items-center justify-center overflow-hidden"
+                                style={{ 
+                                    backgroundColor: currentHex?.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex : "#F1F5F9",
+                                    boxShadow: `0 10px 15px -3px ${currentHex?.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex + '40' : 'rgba(0,0,0,0.1)'}`
+                                }}
+                            >
+                                <Pipette className={`w-5 h-5 ${parseInt((currentHex||'#ffffff').replace('#',''), 16) > 0xffffff/1.5 ? 'text-black/20' : 'text-white/40'}`} />
+                            </div>
+                        </div>
                     </div>
-                    
-                    {/* Vista previa con sombra dinámica según el HEX */}
-                    <div 
-                        className="w-20 h-16 rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-110 duration-500"
-                        style={{ 
-                            backgroundColor: currentHex?.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex : "#F1F5F9",
-                            boxShadow: `0 10px 15px -3px ${currentHex?.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) ? currentHex + '40' : 'rgba(0,0,0,0.1)'}`
-                        }}
-                    />
+                    {errors.hex && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.hex.message}</p>}
                 </div>
-                {errors.hex && <p className="text-[10px] font-bold text-accent-red ml-2 mt-2 uppercase animate-pulse">{errors.hex.message}</p>}
-            </div>
 
             {/* BOTONES DE ACCIÓN */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">

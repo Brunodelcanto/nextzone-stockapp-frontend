@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateSale from "../../components/createSale/CreateSale";
 import SalesList from "../../components/saleList/SaleList";
 import { Receipt } from 'lucide-react';
@@ -6,8 +6,22 @@ import { Receipt } from 'lucide-react';
 const SalePage = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+   const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+             <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+    );
+    
+
     return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in duration-700">
+   <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in zoom-in-95 duration-700 ease-out">
         {/* HEADER DE LA PÁGINA */}
         <header className="max-w-[1600px] mx-auto mb-10 flex items-center gap-4 px-4">
             <div className="bg-primary p-3 rounded-2xl shadow-lg shadow-primary/20">
@@ -32,7 +46,7 @@ const SalePage = () => {
                     <div className="w-2 h-8 bg-primary rounded-full" />
                     <h2 className="text-xl font-black text-slate-700 uppercase tracking-tight">Nueva Operación</h2>
                 </div>
-                <CreateSale onSaleCreated={() => setRefreshTrigger(prev => prev + 1)} />
+                <CreateSale onSaleCreated={() => setRefreshTrigger(prev => prev + 1)} refreshTrigger={refreshTrigger} />
             </section>
 
             {/* DIVISOR ESTÉTICO */}

@@ -6,6 +6,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import type { Category, Color, ColorVariant } from "../../types/index";
 import Joi from "joi";
 import { PackagePlus, Image as ImageIcon, Plus, Trash2, CheckCircle2, AlertCircle, X } from "lucide-react";
+import imageCompression from "browser-image-compression";
 
 interface ProductFormValues {
     name: string;
@@ -65,7 +66,7 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    const { register, control, handleSubmit, reset, resetField, formState: { errors } } = useForm<ProductFormValues>({
+    const { register, control, handleSubmit, reset, resetField, watch, formState: { errors } } = useForm<ProductFormValues>({
         resolver: joiResolver(validationSchema),
         defaultValues: {
             name: "",
@@ -100,7 +101,18 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
 }, [errors]);
 
     const onSubmit: SubmitHandler<ProductFormValues> = async (data) => {
+        const selectedColors = data.variants.map(v => v.color);
+        const hasDuplicates = selectedColors.some((color, index) => selectedColors.indexOf(color) !== index);
+        
+        if (hasDuplicates) {
+            setErrorMessage("No puedes agregar el mismo color más de una vez");
+            setTimeout(() => setErrorMessage(""), 2000);
+            setLoading(false);
+            return;
+        }
+        
         setLoading(true);
+
         try {
             const formData = new FormData();
             formData.append("name", data.name);
@@ -109,15 +121,37 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
             formData.append("variants", JSON.stringify(data.variants));
 
             if (data.image && data.image[0]) {
-                formData.append("image", data.image[0]);
-            }
+                const originalFile = data.image[0];
 
+                const options = {
+                    maxSizeMB: 0.5,
+                    maxWidthOrHeight: 1200,
+                    useWebWorker: true,
+                };
+
+                try {
+                const compressedBlob = await imageCompression(originalFile, options);
+                
+                const compressedFile = new File([compressedBlob], originalFile.name, {
+                    type: originalFile.type,
+                     lastModified: Date.now(),
+                });
+
+                formData.append("image", compressedFile);
+                
+            } catch (compressionError) {
+                console.error("Error al comprimir la imagen:", compressionError);
+                formData.append("image", originalFile);
+            }
+        }
+            const token = localStorage.getItem("token");
             await axios.post("http://localhost:3000/api/products", formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${token}` }
             });
 
             setSuccessMessage("¡Producto cargado con éxito!");
             setTimeout(() => setSuccessMessage(""), 2000);
+            setPreview(null);
             reset();
             onProductCreated();
         } catch (err) {
@@ -147,19 +181,37 @@ const clearImage = () => {
     resetField("image"); 
 };
 
+const handleClearForm = () => {
+    reset();
+    setPreview(null);
+};
+
    return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto p-10 bg-white rounded-[3rem] shadow-card border border-slate-100 transition-all hover:shadow-card-hover animate-in fade-in duration-700">
         
         {/* HEADER DEL FORMULARIO */}
-        <div className="flex items-center gap-4 mb-10 border-b border-slate-50 pb-8">
-            <div className="bg-primary/10 p-4 rounded-2xl text-primary">
-                <PackagePlus className="w-8 h-8" />
-            </div>
-            <div>
-                <h2 className="text-3xl font-black text-slate-800 tracking-tighter uppercase italic">Nuevo Producto</h2>
-                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-1">Carga de inventario • Next Zone</p>
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10 border-b border-slate-50 pb-8">
+    <div className="flex items-center gap-4">
+        <div className="bg-primary/10 p-4 rounded-2xl text-primary flex-shrink-0">
+            <PackagePlus className="w-8 h-8" />
         </div>
+        <div>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter uppercase italic leading-tight">Nuevo Producto</h2>
+            <p className="text-slate-400 font-bold text-[9px] md:text-[10px] uppercase tracking-[0.3em] mt-1">Carga de inventario • Next Zone</p>
+        </div>
+    </div>
+
+    <button 
+        type="button"
+        onClick={handleClearForm}
+        className="flex items-center justify-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-accent-red transition-all duration-300 group/clear active:scale-90 cursor-pointer bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none"
+    >
+        <Trash2 className="w-4 h-4 group-hover/clear:rotate-12" />
+        <span>Vaciar Formulario</span>
+    </button>
+</div>
+
+        
 
         {/* MENSAJES DE ESTADO */}
         {successMessage && (
@@ -249,53 +301,6 @@ const clearImage = () => {
                 </button>
             </div>
             
-
-
-
-
-
-
-
-
-
-                {/* <div className="group relative">
-                <label className="block text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 tracking-widest group-focus-within:text-primary transition-colors">
-                 Categoría
-                </label>
-                <div className="relative">
-                    <select 
-                    {...register("category")} 
-                    className="w-full bg-slate-50 border-2 border-transparent rounded-2xl py-4 px-6 outline-none font-bold text-slate-700 transition-all hover:bg-white hover:border-slate-200 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none relative z-10"
-                    >
-                    <option value="" className="font-sans text-slate-900">Seleccionar categoría...</option>
-                    {categories.map(c => (
-                        <option key={c._id} value={c._id} className="font-sans text-slate-900">
-                        {c.name}
-                        </option>
-                    ))}
-                    </select>
-
-              
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none z-20 text-slate-300 group-focus-within:text-primary transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                    </div>
-                </div>
-                {errors.category && (
-                    <span className="text-[10px] font-bold text-accent-red ml-2 mt-2 inline-block uppercase animate-pulse">
-                    {errors.category.message}
-                    </span>
-                )}
-            </div>
-            </div> */}
-
-
-
-
-
-
-
             <div className="grid grid-cols-1 gap-4">
                 {fields.map((field, index) => (
                     <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end bg-slate-50 p-6 rounded-[2rem] border border-slate-100 transition-all hover:bg-white hover:shadow-md group">
@@ -303,8 +308,23 @@ const clearImage = () => {
                             <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Color</label>
                             <select {...register(`variants.${index}.color` as const)} className="w-full bg-white border-2 border-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-primary transition-all">
                                 <option value="">Color...</option>
-                                {colors.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                            </select>
+                                {colors.map(c => {
+                                // Verificamos si este color ya fue seleccionado en OTRA fila
+                                const isAlreadySelected = fields.some((f, idx) => 
+                                    idx !== index && watch(`variants.${idx}.color`) === c._id
+                                );
+
+                                return (
+                                    <option 
+                                        key={c._id} 
+                                        value={c._id} 
+                                        disabled={isAlreadySelected} // Bloquea el color si ya está en uso
+                                    >
+                                        {c.name} {isAlreadySelected ? "(Ya seleccionado)" : ""}
+                                    </option>
+                                );
+                            })}
+                        </select>
                         </div>
                         <div>
                             <label className="block text-[9px] font-black text-slate-400 uppercase ml-1 mb-1">Stock</label>

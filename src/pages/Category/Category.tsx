@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CategoryList from "../../components/categoryList/CategoryList";
 import CreateCategory from "../../components/createCategory/CreateCategory";
 import { LayoutGrid } from 'lucide-react';
 
 const CategoryPage = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+            const timer = setTimeout(() => setLoading(false), 100);
+            return () => clearTimeout(timer);
+        }, []);
+
+     if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+             <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+    );
 
     return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in duration-700">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in zoom-in-95 duration-700 ease-out">
         
         {/* HEADER DE LA PÁGINA DE CATEGORÍAS */}
         <header className="max-w-[1600px] mx-auto mb-10 flex items-center gap-5 px-4">
@@ -39,7 +51,7 @@ const CategoryPage = () => {
             {/* DIVISOR ESTÉTICO NEXTZONE */}
             <div className="relative h-px bg-slate-200 mx-10">
                 <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-50 px-6 text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">
-                    Grupos Configurados
+                    Explorar categorías
                 </div>
             </div>
 
@@ -47,7 +59,7 @@ const CategoryPage = () => {
             <section id="category-list-section" className="animate-in slide-in-from-bottom-6 duration-1000 delay-200">
                 <div className="flex items-center gap-3 mb-8 px-6">
                     <div className="w-2 h-8 bg-slate-300 rounded-full" />
-                    <h2 className="text-xl font-black text-slate-700 uppercase tracking-tight italic">Listado Maestro</h2>
+                    <h2 className="text-xl font-black text-slate-700 uppercase tracking-tight italic">Galería de categorías</h2>
                 </div>
                 <CategoryList refreshTrigger={refreshTrigger} />
             </section>
@@ -56,7 +68,7 @@ const CategoryPage = () => {
         {/* FOOTER DE PÁGINA */}
         <footer className="max-w-[1600px] mx-auto mt-24 pb-12 px-4 text-center border-t border-slate-100 pt-10">
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em]">
-                Data Architecture • San Lorenzo • Next Zone 2026
+                Next Zone Stock System • San Lorenzo • 2026
             </p>
         </footer>
     </div>

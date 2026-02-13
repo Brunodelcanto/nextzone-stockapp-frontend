@@ -124,54 +124,61 @@ return (
         </div>
 
         {/* GRID DE CATEGORÍAS */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCategories.map(category => (
-                <div 
-                    key={category._id}
-                    onClick={() => navigate(`/edit-category/${category._id}`)}
-                    className={`group bg-white p-8 rounded-[2.5rem] shadow-card border border-slate-100 flex flex-col justify-between transition-all duration-500 hover:shadow-card-hover hover:-translate-y-2 cursor-pointer relative overflow-hidden
-                        ${!category.isActive ? 'opacity-60 grayscale' : 'opacity-100'}`}
-                >
-                    <div className="relative z-10">
-                        <div className="flex items-start justify-between mb-4">
-                            <Tags className={`w-8 h-8 ${category.isActive ? 'text-primary' : 'text-slate-300'} transition-colors duration-500`} />
-                            <span className={`text-[9px] px-3 py-1 rounded-full font-black tracking-widest uppercase ${category.isActive ? 'bg-accent-green/10 text-accent-green' : 'bg-slate-100 text-slate-400'}`}>
-                                {category.isActive ? "Activa" : "Inactiva"}
-                            </span>
-                        </div>
-                        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors italic">
-                            {category.name}
-                        </h3>
-                    </div>
-
-                    <div className="flex gap-3 mt-10 relative z-10">
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleActive(category._id, category.isActive);
-                            }}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 shadow-sm
-                                ${category.isActive 
-                                    ? 'bg-accent-orange/10 text-accent-orange hover:bg-accent-orange hover:text-white hover:shadow-accent-orange/30' 
-                                    : 'bg-accent-green/10 text-accent-green hover:bg-accent-green hover:text-white hover:shadow-accent-green/30'}`}
-                        >
-                            <Power className="w-3.5 h-3.5" />
-                            {category.isActive ? "Pausar" : "Activar"}
-                        </button>
-                        
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowModal(category._id);
-                            }}
-                            className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-accent-red hover:text-white hover:shadow-lg hover:shadow-accent-red/20 transition-all duration-300 active:scale-95 group/del"
-                        >
-                            <Trash2 className="w-5 h-5 group-hover/del:scale-110" />
-                        </button>
-                    </div>
+<div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {filteredCategories.map(category => (
+        <div 
+            key={category._id}
+            onClick={() => navigate(`/edit-category/${category._id}`)}
+            className={`group bg-white p-8 rounded-[2.5rem] shadow-card border border-slate-100 flex flex-col justify-between transition-all duration-500 hover:shadow-card-hover hover:-translate-y-2 cursor-pointer relative overflow-hidden
+                ${!category.isActive ? 'opacity-50 grayscale' : 'opacity-100'}`}
+        >
+            <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                    <Tags className={`w-10 h-10 ${category.isActive ? 'text-primary' : 'text-slate-300'} transition-colors duration-500`} />
                 </div>
-            ))}
+                <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors italic mb-10">
+                    {category.name}
+                </h3>
+            </div>
+
+            <div className="relative z-10">
+                {/* INDICADOR DE ESTADO UNIFICADO (DOT) */}
+                <div className="flex items-center gap-2 mb-6">
+                    <div className={`w-2.5 h-2.5 rounded-full ${category.isActive ? 'bg-accent-green animate-pulse' : 'bg-slate-300'}`} />
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                        {category.isActive ? 'Activo' : 'Pausado'}
+                    </span>
+                </div>
+
+                <div className="flex gap-3 mt-4">
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleActive(category._id, category.isActive);
+                        }}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 shadow-sm cursor-pointer
+                            ${category.isActive 
+                                ? 'bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white' 
+                                : 'bg-primary text-white shadow-primary/20'}`}
+                    >
+                        <Power className="w-3.5 h-3.5" />
+                        {category.isActive ? "Pausar" : "Activar"}
+                    </button>
+                    
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowModal(category._id);
+                        }}
+                        className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-accent-red hover:text-white hover:shadow-lg hover:shadow-accent-red/20 transition-all duration-300 active:scale-95 group/del cursor-pointer"
+                    >
+                        <Trash2 className="w-5 h-5 group-hover/del:scale-110" />
+                    </button>
+                </div>
+            </div>
         </div>
+    ))}
+</div>
 
         {/* ESTADO VACÍO */}
         {filteredCategories.length === 0 && (

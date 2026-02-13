@@ -107,60 +107,68 @@ return (
             )}
         </div>
 
-        {/* GRID DE MUESTRAS DE COLOR */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredColors.map(color => (
-                <div 
-                    key={color._id}
-                    onClick={() => navigate(`/edit-color/${color._id}`)}
-                    className={`group bg-white p-8 rounded-[2.5rem] shadow-card border border-slate-100 flex flex-col items-center transition-all duration-500 hover:shadow-card-hover hover:-translate-y-2 cursor-pointer relative overflow-hidden
-                        ${!color.isActive ? 'opacity-60' : 'opacity-100'}`}
+ {/* GRID DE MUESTRAS DE COLOR */}
+<div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {filteredColors.map(color => (
+        <div 
+            key={color._id}
+            onClick={() => navigate(`/edit-color/${color._id}`)}
+            className={`group bg-white p-8 rounded-[2.5rem] shadow-card border border-slate-100 flex flex-col items-center transition-all duration-500 hover:shadow-card-hover hover:-translate-y-2 cursor-pointer relative overflow-hidden
+                ${!color.isActive ? 'opacity-50 grayscale' : 'opacity-100'}`}
+        >
+            {/* Línea decorativa superior */}
+            <div 
+                className="absolute top-0 left-0 w-full h-2 transition-all duration-500 group-hover:h-3"
+                style={{ backgroundColor: color.hex }}
+            />
+
+            {/* Muestra circular */}
+            <div 
+                className="w-24 h-24 rounded-full border-8 border-slate-50 mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-inner relative"
+                style={{ 
+                    backgroundColor: color.hex,
+                    boxShadow: `0 20px 25px -5px ${color.hex + '30'}` 
+                }}
+            >
+                <div className="absolute inset-0 rounded-full border border-black/5 shadow-inner" />
+            </div>
+            
+            <h3 className="font-black text-xl text-slate-800 uppercase tracking-tighter mb-1 group-hover:text-primary transition-colors italic">
+                {color.name}
+            </h3>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">{color.hex}</p>
+
+            {/* INDICADOR DE ESTADO UNIFICADO (DOT) */}
+            <div className="w-full flex items-center gap-2 mb-6 px-2">
+                <div className={`w-2.5 h-2.5 rounded-full ${color.isActive ? 'bg-accent-green animate-pulse' : 'bg-slate-300'}`} />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    {color.isActive ? 'Activo' : 'Pausado'}
+                </span>
+            </div>
+
+            {/* ACCIONES RÁPIDAS */}
+            <div className="flex gap-3 w-full relative z-10">
+                <button 
+                    onClick={(e) => {e.stopPropagation(); handleToggleActive(color._id, color.isActive || false)}}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 shadow-sm cursor-pointer
+                        ${color.isActive 
+                            ? 'bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white' 
+                            : 'bg-primary text-white shadow-primary/20'}`}
                 >
-                    {/* Fondo decorativo sutil con el color hexadecimal */}
-                    <div 
-                        className="absolute top-0 left-0 w-full h-2 transition-all duration-500 group-hover:h-3"
-                        style={{ backgroundColor: color.hex }}
-                    />
-
-                    {/* Círculo de previsualización con sombra dinámica */}
-                    <div 
-                        className="w-24 h-24 rounded-full border-8 border-slate-50 mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-inner relative"
-                        style={{ 
-                            backgroundColor: color.hex,
-                            boxShadow: `0 20px 25px -5px ${color.hex + '30'}` 
-                        }}
-                    >
-                        <div className="absolute inset-0 rounded-full border border-black/5 shadow-inner" />
-                    </div>
-                    
-                    <h3 className="font-black text-xl text-slate-800 uppercase tracking-tighter mb-1 group-hover:text-primary transition-colors italic">
-                        {color.name}
-                    </h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">{color.hex}</p>
-
-                    {/* ACCIONES RÁPIDAS */}
-                    <div className="flex gap-3 w-full relative z-10">
-                        <button 
-                            onClick={(e) => {e.stopPropagation(); handleToggleActive(color._id, color.isActive || false)}}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 shadow-sm
-                                ${color.isActive 
-                                    ? 'bg-accent-orange/10 text-accent-orange hover:bg-accent-orange hover:text-white hover:shadow-accent-orange/30' 
-                                    : 'bg-accent-green/10 text-accent-green hover:bg-accent-green hover:text-white hover:shadow-accent-green/30'}`}
-                        >
-                            <Power className="w-3.5 h-3.5" />
-                            {color.isActive ? "Pausar" : "Activar"}
-                        </button>
-                        
-                        <button 
-                            onClick={(e) => {e.stopPropagation(); setShowModal(color._id)}}
-                            className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-accent-red hover:text-white hover:shadow-lg hover:shadow-accent-red/20 transition-all duration-300 active:scale-95 group/del"
-                        >
-                            <Trash2 className="w-5 h-5 group-hover/del:scale-110" />
-                        </button>
-                    </div>
-                </div>
-            ))}
+                    <Power className="w-3.5 h-3.5" />
+                    {color.isActive ? "Pausar" : "Activar"}
+                </button>
+                
+                <button 
+                    onClick={(e) => {e.stopPropagation(); setShowModal(color._id)}}
+                    className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-accent-red hover:text-white hover:shadow-lg hover:shadow-accent-red/20 transition-all duration-300 active:scale-95 group/del cursor-pointer"
+                >
+                    <Trash2 className="w-5 h-5 group-hover/del:scale-110" />
+                </button>
+            </div>
         </div>
+    ))}
+</div>
 
         {/* MODAL DE ELIMINACIÓN NEXTZONE */}
         {showModal && (

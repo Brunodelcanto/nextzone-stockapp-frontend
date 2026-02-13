@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateProduct from "../../components/createProduct/CreateProduct";
 import InventoryCards from "../../components/inventoryCard/InventoryCards";
 import { Boxes } from 'lucide-react';
 
 const ProductList = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+             <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+    );
+
     return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in duration-700">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 animate-in fade-in zoom-in-95 duration-700 ease-out">
         
         {/* HEADER DE LA SECCIÓN DE INVENTARIO */}
         <header className="max-w-[1600px] mx-auto mb-10 flex items-center gap-5 px-4">
