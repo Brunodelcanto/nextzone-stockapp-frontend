@@ -42,11 +42,14 @@ const Login = () => {
   const handleLogin = async (formData: LoginFormInputs) => {
     setApiError(null);
     try {
-        const response = await axios.post("http://localhost:3000/api/users/login", formData);
-        const { user, token } = response.data; 
+        const response = await axios.post("http://localhost:3000/api/users/login", formData, {
+          withCredentials: true,
+        });
 
-        if (user && token) {
-            login(token, user);
+        const { user } = response.data; 
+
+        if (user) {
+            login(user);
             navigate('/dashboard');
         } else {
             setApiError("Respuesta incompleta del servidor");

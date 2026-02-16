@@ -22,11 +22,14 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem("token");
         const [resSales, resProducts] = await Promise.all([
-          axios.get("http://localhost:3000/api/sales", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://localhost:3000/api/products")
-        ]);
+      axios.get("http://localhost:3000/api/sales", { 
+        withCredentials: true 
+      }),
+      axios.get("http://localhost:3000/api/products", {
+        withCredentials: true
+      })
+    ]);
 
         const sales = resSales.data.data;
         const products = resProducts.data.data;

@@ -1,50 +1,46 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, type ReactNode } from "react";
-import type { User } from '../types/index'
+import type { User } from '../types/index';
+import axios from 'axios';
 
 interface AuthContextType {
     user: User | null;
-    login: (token: string, userData: User) => void;
+    login: (user: User) => void;
     logout: () => void;
     loading: boolean;
 }
 
-const AuthContext =  createContext<AuthContextType | undefined> (undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode}) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(() => {
-        const savedToken = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
-        const expiry = localStorage.getItem('expiryTime');
+        if (!savedUser) return null;
 
-        if (!savedToken || !savedUser || !expiry) return null;
-
-        if (Date.now() > parseInt(expiry)) {
-            localStorage.clear();
+        try {
+            return JSON.parse(savedUser);
+        } catch (error) {
+            console.error('Error al parsear el usuario:', error);
             return null;
         }
-            try {
-                return JSON.parse(savedUser);
-            } catch (error) {
-                console.error('Error parsing saved user from localStorage:', error);
-                return null;
-            }
     });
+
     const [loading] = useState(false);
 
-    const login = (token: string, user: User) => {
-        const expiryTime = Date.now() +8 *60 *60 *1000;
-
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('expiryTime', expiryTime.toString());
-
-        setUser(user);
+    const login = (userData: User) => {
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
     };
 
-    const logout = () => {
-        localStorage.clear();
-        setUser(null);
+    const logout = async () => {
+        try {
+            await axios.post("http://localhost:3000/api/users/logout", {}, { withCredentials: true });
+        } catch (error) {
+            console.error("Error al cerrar sesión en el servidor", error);
+        } finally {
+            localStorage.clear();
+            setUser(null);
+        }
     };
 
     return (

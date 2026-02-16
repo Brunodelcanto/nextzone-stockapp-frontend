@@ -52,12 +52,16 @@ const Register = () => {
         setApiError(null);
 
         try {
-            const response = await axios.post("http://localhost:3000/api/users/register", formData)
+            const response = await axios.post("http://localhost:3000/api/users/register", formData,
+              {
+                withCredentials: true,
+              }
+            )
 
-            const { user, token } = response.data;
+            const { user } = response.data;
 
-            if (user && token) {
-                login(token, user);
+            if (user) {
+                login(user);
                 navigate('/dashboard');
             } else {
                 setApiError("Answer from server is missing user or token");
