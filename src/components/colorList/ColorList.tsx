@@ -49,6 +49,15 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
     const handleDelete = async (id: string) => {
         try {
             await api.delete(`/colors/${id}`);
+            setColors(prev => prev.filter(c => c._id !== id));
+            setSuccessMessage("Color eliminado correctamente");
+            setTimeout(() => setSuccessMessage(""), 2000);
+        } catch (err) {
+            console.error("Error deleting color:", err);
+            setErrorMessage("No se puede eliminar este color porque está asociado a un producto");
+            setTimeout(() => setErrorMessage(""), 2000);
+        }
+    };
 
     const filteredColors = colors.filter(c => 
         c.name.toLowerCase().includes(searchTerm.toLowerCase())
