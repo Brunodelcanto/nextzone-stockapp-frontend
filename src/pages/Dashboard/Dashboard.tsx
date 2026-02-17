@@ -34,13 +34,12 @@ const Dashboard = () => {
         const sales = resSales.data.data;
         const products = resProducts.data.data;
 
-        // Calculamos productos con bajo stock (ej: total < 5)
         const lowStock = products.filter((p: Product) => 
           p.isActive && p.variants.reduce((acc, v) => acc + v.amount, 0) <= 5
         ).length;
 
         setData({
-          recentSales: sales.slice(0, 5), // Solo las últimas 5
+          recentSales: sales.slice(0, 5),
           totalRevenue: resSales.data.totalRevenue || 0,
           totalProfit: resSales.data.totalProfit || 0,
           totalSalesCount: resSales.data.count || 0,
