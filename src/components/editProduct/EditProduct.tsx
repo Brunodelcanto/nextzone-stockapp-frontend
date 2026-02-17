@@ -111,8 +111,6 @@ const EditProduct = () => {
                 formData.append("image", data.image[0]);
             }
 
-            console.log("Archivo en FormData:", formData.get("image"));
-
             await axios.put(`http://localhost:3000/api/products/${id}`, formData);
             setSuccessMessage("¡Producto actualizado!");
             setTimeout(() => setSuccessMessage(""), 2000);

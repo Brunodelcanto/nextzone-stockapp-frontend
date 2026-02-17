@@ -57,8 +57,6 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
 
    const handleQuantityChange = async (productId: string, color: string, quantity: number) => {
-    const url = `http://localhost:3000/api/products/stock/${productId}`;
-    console.log("Enviando a:", url, "Datos:", { color, quantity });
        try {
         const response = await axios.patch(`http://localhost:3000/api/products/stock/${productId}`, {
             color,

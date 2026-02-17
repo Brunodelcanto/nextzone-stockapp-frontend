@@ -96,7 +96,7 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
 
     useEffect(() => {
     if (Object.keys(errors).length > 0) {
-        console.log("Errores de validación actual:", errors);
+        console.log("Errors in validations:", errors);
     }
 }, [errors]);
 
