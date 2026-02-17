@@ -310,7 +310,7 @@ const handleClearForm = () => {
                                 <option value="">Color...</option>
                                 {colors.map(c => {
                                 // Verificamos si este color ya fue seleccionado en OTRA fila
-                                const isAlreadySelected = fields.some((f, idx) => 
+                                const isAlreadySelected = fields.some((_, idx) => 
                                     idx !== index && watch(`variants.${idx}.color`) === c._id
                                 );
 
