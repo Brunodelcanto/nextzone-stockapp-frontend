@@ -39,17 +39,19 @@ const Login = () => {
     resolver: joiResolver(validationSchema),
   });
 
-  const handleLogin = async (formData: LoginFormInputs) => {
+const handleLogin = async (formData: LoginFormInputs) => {
     setApiError(null);
     try {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, formData, {
-          withCredentials: true,
+            withCredentials: true,
         });
 
-        const { user } = response.data; 
+        const { user, token } = response.data; 
 
-        if (user) {
-            login(user);
+        if (user && token) {
+            localStorage.setItem('token', token);
+        
+            login(user, token);
             navigate('/dashboard');
         } else {
             setApiError("Respuesta incompleta del servidor");
@@ -59,7 +61,7 @@ const Login = () => {
             setApiError(err.response?.data?.message || "Error en las credenciales");
         }
     }
-  };
+};
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 selection:bg-primary/30">

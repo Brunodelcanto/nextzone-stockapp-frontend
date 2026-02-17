@@ -5,7 +5,7 @@ import axios from 'axios';
 
 interface AuthContextType {
     user: User | null;
-    login: (user: User) => void;
+    login: (user: User, token: string) => void;
     logout: () => void;
     loading: boolean;
 }
@@ -27,8 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const [loading] = useState(false);
 
-    const login = (userData: User) => {
+    const login = (userData: User, token: string) => {
         localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', token);
         setUser(userData);
     };
 
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             localStorage.clear();
             setUser(null);
+            window.location.href = '/login';
         }
     };
 

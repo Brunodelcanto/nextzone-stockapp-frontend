@@ -58,10 +58,10 @@ const Register = () => {
               }
             )
 
-            const { user } = response.data;
+            const { user, token } = response.data;
 
-            if (user) {
-                login(user);
+            if (user && token) {
+                login(user, token);
                 navigate('/dashboard');
             } else {
                 setApiError("Answer from server is missing user or token");
