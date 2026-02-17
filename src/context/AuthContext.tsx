@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = async () => {
         try {
-            await axios.post("http://localhost:3000/api/users/logout", {}, { withCredentials: true });
+            await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`, {}, { withCredentials: true });
         } catch (error) {
             console.error("Error al cerrar sesión en el servidor", error);
         } finally {

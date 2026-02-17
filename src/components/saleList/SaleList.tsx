@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import type { Sale } from "../../types";
 import { Search, Calendar, DollarSign, TrendingUp, ShoppingBag, Filter, X } from 'lucide-react';
+import api from "../../api/axiosConfig";
 
 interface SalesListProps {
     refreshTrigger: number;
@@ -15,31 +15,28 @@ const SalesList = ({ refreshTrigger }: SalesListProps) => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
-
-    const fetchSales = async () => {
-        try {
-            setLoading(true);
-            let url = `${import.meta.env.VITE_API_URL}/sales?t=${Date.now()}`;
-            if (startDate && endDate) {
-                url += `&startDate=${startDate}&endDate=${endDate}`;
-            }
-
-            const res = await axios.get(url, {
-                withCredentials: true,
-            });
-
-            setSales(res.data.data);
-            setTotals({ 
-                count: res.data.count, 
-                revenue: res.data.totalRevenue, 
-                profit: res.data.totalProfit 
-            });
-        } catch (err) {
-            console.error("Error al traer ventas:", err);
-        } finally {
-            setLoading(false);
+    
+const fetchSales = async () => {
+    try {
+        setLoading(true);
+        let endpoint = `/sales?t=${Date.now()}`;
+        if (startDate && endDate) {
+            endpoint += `&startDate=${startDate}&endDate=${endDate}`;
         }
-    };
+        const res = await api.get(endpoint);
+
+        setSales(res.data.data);
+        setTotals({ 
+            count: res.data.count, 
+            revenue: res.data.totalRevenue, 
+            profit: res.data.totalProfit 
+        });
+    } catch (err) {
+        console.error("Error al traer ventas:", err);
+    } finally {
+        setLoading(false);
+    }
+};
 
     useEffect(() => {
         fetchSales();

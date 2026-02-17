@@ -23,10 +23,10 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const [resSales, resProducts] = await Promise.all([
-      axios.get("http://localhost:3000/api/sales", { 
+      axios.get(`${import.meta.env.VITE_API_URL}/sales`, { 
         withCredentials: true 
       }),
-      axios.get("http://localhost:3000/api/products", {
+      axios.get(`${import.meta.env.VITE_API_URL}/products`, {
         withCredentials: true
       })
     ]);
