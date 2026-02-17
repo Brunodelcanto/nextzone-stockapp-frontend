@@ -4,14 +4,16 @@ import {
   LayoutDashboard, Package, Palette, Tags, 
   Receipt, LogOut, Menu, X 
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false); // Estado para el menú móvil
+  const { logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false); 
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    navigate("/login");
+  const handleLogout = async () => {
+    await logout(); 
+    setIsOpen(false); 
   };
 
   const toggleMenu = () => setIsOpen(!isOpen);
