@@ -82,8 +82,8 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
         const loadInitialData = async () => {
             try {
                 const [resCats, resCols] = await Promise.all([
-                    axios.get("http://localhost:3000/api/categories"),
-                    axios.get("http://localhost:3000/api/colors")
+                    axios.get(`${import.meta.env.VITE_API_URL}/categories`),
+                    axios.get(`${import.meta.env.VITE_API_URL}/colors`)
                 ]);
                 setCategories(resCats.data.data);
                 setColors(resCols.data.data);
@@ -145,7 +145,7 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
             }
         }
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:3000/api/products", formData, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/products`, formData, {
                 headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${token}` }
             });
 

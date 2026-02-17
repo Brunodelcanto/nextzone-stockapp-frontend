@@ -66,9 +66,9 @@ const EditProduct = () => {
         const loadInitialData = async () => {
             try {
                 const [resProduct, resCats, resCols] = await Promise.all([
-                    axios.get(`http://localhost:3000/api/products/${id}`),
-                    axios.get("http://localhost:3000/api/categories"),
-                    axios.get("http://localhost:3000/api/colors")
+                    axios.get(`${import.meta.env.VITE_API_URL}/products/${id}`),
+                    axios.get(`${import.meta.env.VITE_API_URL}/categories`),
+                    axios.get(`${import.meta.env.VITE_API_URL}/colors`)
                 ]);
 
                 const p = resProduct.data.data;
@@ -111,7 +111,7 @@ const EditProduct = () => {
                 formData.append("image", data.image[0]);
             }
 
-            await axios.put(`http://localhost:3000/api/products/${id}`, formData);
+            await axios.put(`${import.meta.env.VITE_API_URL}/products/${id}`, formData);
             setSuccessMessage("¡Producto actualizado!");
             setTimeout(() => setSuccessMessage(""), 2000);
             navigate("/products");

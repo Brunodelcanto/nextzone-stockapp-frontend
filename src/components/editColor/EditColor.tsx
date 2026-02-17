@@ -41,7 +41,7 @@ const EditColor = () => {
     useEffect(() => {
         const fetchColor = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/colors/${id}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/colors/${id}`);
                 const colorData = response.data.data;
                 reset({
                     name: colorData.name,
@@ -62,7 +62,7 @@ const EditColor = () => {
     const onSubmit: SubmitHandler<ColorFormValues> = async (data) => {
         setServerError(null);
         try {
-            await axios.put(`http://localhost:3000/api/colors/${id}`, data);
+            await axios.put(`${import.meta.env.VITE_API_URL}/colors/${id}`, data);
             setSuccessMessage("¡Color actualizado!");
             setTimeout(() => setSuccessMessage(null), 2000);
             navigate("/colors");

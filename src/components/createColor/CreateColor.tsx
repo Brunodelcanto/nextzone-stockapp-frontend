@@ -44,7 +44,7 @@ const CreateColor = ({ onColorCreated }: CreateColorProps) => {
 
     const onSubmit: SubmitHandler<ColorFormValues> = async (data) => {
         try {
-            const response = await axios.post("http://localhost:3000/api/colors", data);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/colors`, data);
             if (!response.data.error) {
                 setSuccessMessage("Color creado correctamente");
                 setTimeout(() => setSuccessMessage(""), 2000);

@@ -19,7 +19,7 @@ const SalesList = ({ refreshTrigger }: SalesListProps) => {
     const fetchSales = async () => {
         try {
             setLoading(true);
-            let url = `http://localhost:3000/api/sales?t=${Date.now()}`;
+            let url = `${import.meta.env.VITE_API_URL}/sales?t=${Date.now()}`;
             if (startDate && endDate) {
                 url += `&startDate=${startDate}&endDate=${endDate}`;
             }

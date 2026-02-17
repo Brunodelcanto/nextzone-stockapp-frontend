@@ -42,7 +42,7 @@ const Login = () => {
   const handleLogin = async (formData: LoginFormInputs) => {
     setApiError(null);
     try {
-        const response = await axios.post("http://localhost:3000/api/users/login", formData, {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, formData, {
           withCredentials: true,
         });
 

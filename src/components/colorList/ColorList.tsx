@@ -19,7 +19,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
 
     const fetchColors = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/colors");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/colors`);
             setColors(response.data.data);
         } catch (err) {
             console.error("Error fetching colors:", err);
@@ -35,7 +35,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
     const handleToggleActive = async (id: string, isActive: boolean) => {
         try {
             const endpoint = isActive ? "deactivate" : "activate";
-            await axios.patch(`http://localhost:3000/api/colors/${id}/${endpoint}`);
+            await axios.patch(`${import.meta.env.VITE_API_URL}/colors/${id}/${endpoint}`);
             setColors(prev => prev.map(c => c._id === id ? { ...c, isActive: !isActive } : c));
             setSuccessMessage(isActive ? "Color desactivado correctamente" : "Color activado correctamente");
             setTimeout(() => setSuccessMessage(""), 2000);
@@ -48,7 +48,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:3000/api/colors/${id}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/colors/${id}`);
             setColors(prev => prev.filter(c => c._id !== id));
             setSuccessMessage("Color eliminado correctamente");
             setTimeout(() => setSuccessMessage(""), 2000);

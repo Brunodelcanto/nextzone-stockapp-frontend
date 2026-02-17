@@ -20,7 +20,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/categories");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
             setCategories(response.data.data); 
         } catch (err) {
             console.error("Error fetching categories:", err);
@@ -40,7 +40,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
         try {
             const endpoint = isActive ? "deactivate" : "activate";
             //
-            const response = await axios.patch(`http://localhost:3000/api/categories/${id}/${endpoint}`);
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/categories/${id}/${endpoint}`);
             
             if (!response.data.error) {
                 setCategories(prev => prev.map(cat => 
@@ -58,7 +58,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`http://localhost:3000/api/categories/${id}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/categories/${id}`);
             setCategories(prev => prev.filter(cat => cat._id !== id));
             setSuccessMessage("Categoría eliminada correctamente");
             setTimeout(() => setSuccessMessage(""), 2000);

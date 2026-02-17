@@ -17,7 +17,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/products");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
             setProducts(response.data.data);
         } catch (err) {
             console.error("Error fetching products:", err);
@@ -58,7 +58,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
    const handleQuantityChange = async (productId: string, color: string, quantity: number) => {
        try {
-        const response = await axios.patch(`http://localhost:3000/api/products/stock/${productId}`, {
+        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/products/stock/${productId}`, {
             color,
             quantity
         });
@@ -75,7 +75,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
     try {
         const endpoint = isActive ? "deactivate" : "activate";
 
-        const response = await axios.patch(`http://localhost:3000/api/products/${endpoint}/${productId}`);
+        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/products/${endpoint}/${productId}`);
 
         if (!response.data.error) {
             setProducts(prev => prev.map(p =>
@@ -90,7 +90,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
    const eliminateProduct = async (productId: string) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/api/products/${productId}`);
+        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/products/${productId}`);
 
         if (!response.data.error) {
             setProducts(prev => prev.filter(p => p._id !== productId));

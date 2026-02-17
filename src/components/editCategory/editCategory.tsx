@@ -31,7 +31,7 @@ const EditCategory = () => {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/categories/${id}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories/${id}`);
                 const categoryData = response.data.data;
                 reset({
                     name: categoryData.name
@@ -50,7 +50,7 @@ const EditCategory = () => {
 
     const onSubmit: SubmitHandler<CategoryFormValues> = async (data) => {
         try {
-            await axios.put(`http://localhost:3000/api/categories/${id}`, data);
+            await axios.put(`${import.meta.env.VITE_API_URL}/categories/${id}`, data);
             setSuccessMessage("¡Categoría actualizada!");
             setTimeout(() => setSuccessMessage(null), 2000);
             navigate("/categories");

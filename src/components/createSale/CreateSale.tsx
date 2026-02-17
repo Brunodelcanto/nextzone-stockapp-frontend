@@ -18,7 +18,7 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const res = await axios.get("http://localhost:3000/api/products");
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
             setProducts(res.data.data.filter((p: Product) => p.isActive));
         };
         fetchProducts();
@@ -66,7 +66,7 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
                 })),
                 comment
             };
-            await axios.post("http://localhost:3000/api/sales", saleData, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/sales`, saleData, {
                 withCredentials: true 
             });
             setSuccessMessage("Venta realizada con éxito");

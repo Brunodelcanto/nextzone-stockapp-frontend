@@ -30,7 +30,7 @@ const CreateCategory = ({ onCategoryCreated }: CreateCategoryProps) => {
 
     const onSubmit: SubmitHandler<CategoryFormValues> = async (data) => {
         try {
-            const response = await axios.post("http://localhost:3000/api/categories", data);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/categories`, data);
             if (!response.data.error) {
                 setSuccessMessage("Categoría creada correctamente");
                 setTimeout(() => setSuccessMessage(""), 2000);
