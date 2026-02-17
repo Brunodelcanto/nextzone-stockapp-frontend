@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import type { Category, Product } from "../../types";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus, Minus, Power, Trash2, AlertTriangle, Ban, PackageSearch } from "lucide-react";
@@ -17,7 +17,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
+            const response = await api.get(`/products`);
             setProducts(response.data.data);
         } catch (err) {
             console.error("Error fetching products:", err);
@@ -58,7 +58,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
    const handleQuantityChange = async (productId: string, color: string, quantity: number) => {
        try {
-        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/products/stock/${productId}`, {
+        const response = await api.patch(`/products/stock/${productId}`, {
             color,
             quantity
         });
@@ -75,7 +75,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
     try {
         const endpoint = isActive ? "deactivate" : "activate";
 
-        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/products/${endpoint}/${productId}`);
+        const response = await api.patch(`/products/${endpoint}/${productId}`);
 
         if (!response.data.error) {
             setProducts(prev => prev.map(p =>
@@ -90,7 +90,7 @@ const InventoryCards = ({ refreshTrigger }: InventoryCardsProps) => {
 
    const eliminateProduct = async (productId: string) => {
     try {
-        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/products/${productId}`);
+        const response = await api.delete(`/products/${productId}`);
 
         if (!response.data.error) {
             setProducts(prev => prev.filter(p => p._id !== productId));

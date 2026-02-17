@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+import api from "../../api/axiosConfig";
 import type {SubmitHandler } from "react-hook-form";
 import { useForm, useFieldArray } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi"; 
@@ -82,8 +82,8 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
         const loadInitialData = async () => {
             try {
                 const [resCats, resCols] = await Promise.all([
-                    axios.get(`${import.meta.env.VITE_API_URL}/categories`),
-                    axios.get(`${import.meta.env.VITE_API_URL}/colors`)
+                    api.get(`/categories`),
+                    api.get(`/colors`)
                 ]);
                 setCategories(resCats.data.data);
                 setColors(resCols.data.data);
@@ -145,7 +145,7 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
             }
         }
             const token = localStorage.getItem("token");
-            await axios.post(`${import.meta.env.VITE_API_URL}/products`, formData, {
+            await api.post(`/products`, formData, {
                 headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${token}` }
             });
 
@@ -155,7 +155,7 @@ const CreateProduct = ({ onProductCreated }: CreateProductProps) => {
             reset();
             onProductCreated();
         } catch (err) {
-            const error = err as AxiosError<{ message?: string }>;
+            const error = err as any;
             setErrorMessage(error.response?.data?.message || "Error al crear producto");
             setTimeout(() => setErrorMessage(""), 2000);
         } finally {

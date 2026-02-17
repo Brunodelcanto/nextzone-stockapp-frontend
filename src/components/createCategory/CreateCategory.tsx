@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import Joi from "joi";
 import { Tags, CheckCircle2, AlertCircle, FolderPlus } from "lucide-react";
 
@@ -30,7 +30,7 @@ const CreateCategory = ({ onCategoryCreated }: CreateCategoryProps) => {
 
     const onSubmit: SubmitHandler<CategoryFormValues> = async (data) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/categories`, data);
+            const response = await api.post(`/categories`, data);
             if (!response.data.error) {
                 setSuccessMessage("Categoría creada correctamente");
                 setTimeout(() => setSuccessMessage(""), 2000);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import Joi from "joi";
 import { Palette, CheckCircle2, AlertCircle, Paintbrush, Pipette } from "lucide-react";
 
@@ -44,7 +44,7 @@ const CreateColor = ({ onColorCreated }: CreateColorProps) => {
 
     const onSubmit: SubmitHandler<ColorFormValues> = async (data) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/colors`, data);
+            const response = await api.post(`/colors`, data);
             if (!response.data.error) {
                 setSuccessMessage("Color creado correctamente");
                 setTimeout(() => setSuccessMessage(""), 2000);

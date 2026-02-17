@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { User } from '../types/index';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 
 interface AuthContextType {
     user: User | null;
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = async () => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`, {}, { withCredentials: true });
+            await api.post(`/users/logout`, {});
         } catch (error) {
             console.error("Error al cerrar sesión en el servidor", error);
         } finally {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import Joi from "joi";
 import { Edit3, Tags, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 
@@ -31,7 +31,7 @@ const EditCategory = () => {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories/${id}`);
+                const response = await api.get(`/categories/${id}`);
                 const categoryData = response.data.data;
                 reset({
                     name: categoryData.name
@@ -50,7 +50,7 @@ const EditCategory = () => {
 
     const onSubmit: SubmitHandler<CategoryFormValues> = async (data) => {
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/categories/${id}`, data);
+            await api.put(`/categories/${id}`, data);
             setSuccessMessage("¡Categoría actualizada!");
             setTimeout(() => setSuccessMessage(null), 2000);
             navigate("/categories");

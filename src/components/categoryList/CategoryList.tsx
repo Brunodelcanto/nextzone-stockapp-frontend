@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import type { Category } from "../../types";
 import { Search, Tags, Power, Trash2, AlertTriangle, CheckCircle2, AlertCircle, LayoutGrid } from 'lucide-react';
@@ -20,7 +20,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
+            const response = await api.get(`/categories`);
             setCategories(response.data.data); 
         } catch (err) {
             console.error("Error fetching categories:", err);
@@ -40,7 +40,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
         try {
             const endpoint = isActive ? "deactivate" : "activate";
             //
-            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/categories/${id}/${endpoint}`);
+            const response = await api.patch(`/categories/${id}/${endpoint}`);
             
             if (!response.data.error) {
                 setCategories(prev => prev.map(cat => 
@@ -58,7 +58,7 @@ const CategoryList = ({ refreshTrigger }: CategoryListProps) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/categories/${id}`);
+            await api.delete(`/categories/${id}`);
             setCategories(prev => prev.filter(cat => cat._id !== id));
             setSuccessMessage("Categoría eliminada correctamente");
             setTimeout(() => setSuccessMessage(""), 2000);

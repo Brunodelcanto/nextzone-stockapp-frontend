@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import Joi from "joi";
 import type { ProductFormValues, Category, Color, ColorVariant } from "../../types/index";
 import { Edit3, Package, Image as ImageIcon, Plus, Trash2, CheckCircle2, AlertCircle, X, ArrowLeft } from "lucide-react";
@@ -66,9 +66,9 @@ const EditProduct = () => {
         const loadInitialData = async () => {
             try {
                 const [resProduct, resCats, resCols] = await Promise.all([
-                    axios.get(`${import.meta.env.VITE_API_URL}/products/${id}`),
-                    axios.get(`${import.meta.env.VITE_API_URL}/categories`),
-                    axios.get(`${import.meta.env.VITE_API_URL}/colors`)
+                    api.get(`/products/${id}`),
+                    api.get(`/categories`),
+                    api.get(`/colors`)
                 ]);
 
                 const p = resProduct.data.data;
@@ -111,7 +111,7 @@ const EditProduct = () => {
                 formData.append("image", data.image[0]);
             }
 
-            await axios.put(`${import.meta.env.VITE_API_URL}/products/${id}`, formData);
+            await api.put(`/products/${id}`, formData);
             setSuccessMessage("¡Producto actualizado!");
             setTimeout(() => setSuccessMessage(""), 2000);
             navigate("/products");

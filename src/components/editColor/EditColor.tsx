@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import Joi from "joi";
 import { Edit3, Palette, CheckCircle2, AlertCircle, ArrowLeft, Paintbrush, Pipette } from "lucide-react";
 
@@ -41,7 +41,7 @@ const EditColor = () => {
     useEffect(() => {
         const fetchColor = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/colors/${id}`);
+                const response = await api.get(`/colors/${id}`);
                 const colorData = response.data.data;
                 reset({
                     name: colorData.name,
@@ -62,7 +62,7 @@ const EditColor = () => {
     const onSubmit: SubmitHandler<ColorFormValues> = async (data) => {
         setServerError(null);
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/colors/${id}`, data);
+            await api.put(`/colors/${id}`, data);
             setSuccessMessage("¡Color actualizado!");
             setTimeout(() => setSuccessMessage(null), 2000);
             navigate("/colors");

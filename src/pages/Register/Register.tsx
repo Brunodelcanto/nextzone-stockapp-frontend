@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "axios";
+import api from "../../api/axiosConfig";
 import { User, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 
 type RegisterFormInputs = { 
@@ -52,11 +53,7 @@ const Register = () => {
         setApiError(null);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/register`, formData,
-              {
-                withCredentials: true,
-              }
-            )
+            const response = await api.post(`/users/register`, formData)
 
             const { user, token } = response.data;
 

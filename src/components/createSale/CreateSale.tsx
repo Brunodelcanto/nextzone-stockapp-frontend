@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 // import { useNavigate } from "react-router-dom";
 import type { Product, Color, CartItem, ColorVariant } from "../../types";
 import { ShoppingCart, Package, AlertCircle, CheckCircle2, Trash2, Minus, Plus } from 'lucide-react';
@@ -18,9 +18,7 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
-                withCredentials: true
-            });
+            const res = await api.get(`/products`);
             setProducts(res.data.data.filter((p: Product) => p.isActive));
         };
         fetchProducts();
@@ -68,9 +66,7 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
                 })),
                 comment
             };
-            await axios.post(`${import.meta.env.VITE_API_URL}/sales`, saleData, {
-                withCredentials: true 
-            });
+            await api.post(`/sales`, saleData);
             setSuccessMessage("Venta realizada con éxito");
             setTimeout(() => setSuccessMessage(""), 2000);
             reset();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { 
   TrendingUp, Package, AlertTriangle, DollarSign, 
@@ -23,12 +23,8 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const [resSales, resProducts] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}/sales`, { 
-        withCredentials: true 
-      }),
-      axios.get(`${import.meta.env.VITE_API_URL}/products`, {
-        withCredentials: true
-      })
+      api.get(`/sales`),
+      api.get(`/products`)
     ]);
 
         const sales = resSales.data.data;

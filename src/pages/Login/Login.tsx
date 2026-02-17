@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Joi from 'joi';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import api from '../../api/axiosConfig';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { useState } from 'react';
 import { Lock, Mail, AlertCircle } from 'lucide-react'; 
@@ -42,9 +43,7 @@ const Login = () => {
 const handleLogin = async (formData: LoginFormInputs) => {
     setApiError(null);
     try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, formData, {
-            withCredentials: true,
-        });
+        const response = await api.post(`/users/login`, formData);
 
         const { user, token } = response.data; 
 

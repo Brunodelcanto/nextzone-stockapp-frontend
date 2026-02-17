@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import type { Color } from "../../types";
 import { Search, Power, Trash2, AlertTriangle, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -19,7 +19,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
 
     const fetchColors = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/colors`);
+            const response = await api.get(`/colors`);
             setColors(response.data.data);
         } catch (err) {
             console.error("Error fetching colors:", err);
@@ -35,7 +35,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
     const handleToggleActive = async (id: string, isActive: boolean) => {
         try {
             const endpoint = isActive ? "deactivate" : "activate";
-            await axios.patch(`${import.meta.env.VITE_API_URL}/colors/${id}/${endpoint}`);
+            await api.patch(`/colors/${id}/${endpoint}`);
             setColors(prev => prev.map(c => c._id === id ? { ...c, isActive: !isActive } : c));
             setSuccessMessage(isActive ? "Color desactivado correctamente" : "Color activado correctamente");
             setTimeout(() => setSuccessMessage(""), 2000);
@@ -48,16 +48,7 @@ const ColorList = ({ refreshTrigger }: ColorListProps) => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/colors/${id}`);
-            setColors(prev => prev.filter(c => c._id !== id));
-            setSuccessMessage("Color eliminado correctamente");
-            setTimeout(() => setSuccessMessage(""), 2000);
-        } catch (err) {
-             console.error("Error toggling product status:", err);
-            setErrorMessage("No se puede eliminar este color porque está asociado a un producto");
-            setTimeout(() => setErrorMessage(""), 2000);
-        }
-    };
+            await api.delete(`/colors/${id}`);
 
     const filteredColors = colors.filter(c => 
         c.name.toLowerCase().includes(searchTerm.toLowerCase())
