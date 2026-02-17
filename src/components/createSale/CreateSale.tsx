@@ -66,11 +66,8 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
                 })),
                 comment
             };
-            const token = localStorage.getItem("token");  
             await axios.post("http://localhost:3000/api/sales", saleData, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                withCredentials: true 
             });
             setSuccessMessage("Venta realizada con éxito");
             setTimeout(() => setSuccessMessage(""), 2000);

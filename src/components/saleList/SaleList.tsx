@@ -17,7 +17,6 @@ const SalesList = ({ refreshTrigger }: SalesListProps) => {
     const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
 
     const fetchSales = async () => {
-        const token = localStorage.getItem("token");
         try {
             setLoading(true);
             let url = `http://localhost:3000/api/sales?t=${Date.now()}`;
@@ -26,9 +25,7 @@ const SalesList = ({ refreshTrigger }: SalesListProps) => {
             }
 
             const res = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                withCredentials: true,
             });
 
             setSales(res.data.data);
