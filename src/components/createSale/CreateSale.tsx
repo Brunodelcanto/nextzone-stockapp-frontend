@@ -18,7 +18,9 @@ const CreateSale = ({ onSaleCreated, refreshTrigger }: CreateSaleProps) => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
+                withCredentials: true
+            });
             setProducts(res.data.data.filter((p: Product) => p.isActive));
         };
         fetchProducts();
